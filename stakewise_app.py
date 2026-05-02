@@ -74,19 +74,19 @@ html,body,[class*="css"]{font-family:'Inter',sans-serif;}
 .xp-bar{background:linear-gradient(90deg,var(--blue),var(--teal));height:100%;border-radius:5px;}
 
 /* ── Scenario cards ── */
-.sc{border-radius:12px;padding:14px 16px;border-left:4px solid;}
+.sc{border-radius:12px;padding:14px 16px;border-left:4px solid;color:white;}
 .sc-severe{background:#FEF2F2;border-color:var(--red);}
 .sc-warn  {background:#FFFBEB;border-color:var(--amber);}
 .sc-safe  {background:#F0FDF4;border-color:var(--green);}
 .sc-info  {background:var(--light);border-color:var(--blue);}
 .sc-title {font-weight:600;font-size:.83rem;margin-bottom:3px;}
 .sc-dollar{font-size:1.1rem;font-weight:700;margin-top:4px;}
-.sc-body  {font-size:.79rem;color:#374151;}
+.sc-body  {font-size:.79rem;}
 
 /* ── Lesson / AI response ── */
 .lesson-box{background:var(--light);border-radius:12px;padding:16px;
   border-left:4px solid var(--blue);font-size:.86rem;line-height:1.75;
-  color:#1E293B;margin-bottom:.9rem;}
+  color:white;margin-bottom:.9rem;}
 
 /* ── Trust / tip banners ── */
 .tip{background:#EFF6FF;border:1px solid #BFDBFE;border-radius:10px;
@@ -817,7 +817,7 @@ def screen_risk():
     step_labels = ["Your Setup","Pick Scenario","Adjust & Compare","Your Action Plan"]
     dots = "".join(
         f'<div class="step-dot {"sd-done" if i<wiz_step else "sd-active" if i==wiz_step else "sd-todo"}">{i+1}</div>'
-        f'<span style="font-size:.72rem;color:{"#0F2044" if i<=wiz_step else "#94A3B8"};font-weight:{"600" if i==wiz_step else "400"}">&nbsp;{l}&nbsp;&nbsp;</span>'
+        f'<span style="font-size:.72rem;color:{"#94A3B8"};font-weight:{"600" if i==wiz_step else "400"}">&nbsp;{l}&nbsp;&nbsp;</span>'
         for i,(l) in enumerate(step_labels)
     )
     st.markdown(f'<div class="step-row">{dots}</div>', unsafe_allow_html=True)

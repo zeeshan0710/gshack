@@ -948,7 +948,8 @@ Optimize to reduce crash loss for this persona while maintaining some growth pot
             for i,asset in enumerate(ALL_ASSETS):
                 cur_pct = ca.get(asset,0)
                 if i < len(ALL_ASSETS)-1:
-                    val = st.slider(f"{asset} %", 0, min(100,remaining), cur_pct, key=f"sl3_{asset}")
+                    max_val = max(1, min(100, remaining))
+                    val = st.slider(f"{asset} %", 0, max_val, min(cur_pct, max_val), key=f"sl3_{asset}")
                     new_alloc[asset] = val; remaining -= val
                 else:
                     last = max(0,remaining); new_alloc[asset] = last

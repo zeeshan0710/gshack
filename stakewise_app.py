@@ -74,7 +74,7 @@ html,body,[class*="css"]{font-family:'Inter',sans-serif;}
 .xp-bar{background:linear-gradient(90deg,var(--blue),var(--teal));height:100%;border-radius:5px;}
 
 /* ── Scenario cards ── */
-.sc{border-radius:12px;padding:14px 16px;border-left:4px solid;color:white;}
+.sc{border-radius:12px;padding:14px 16px;border-left:4px solid;color:black;}
 .sc-severe{background:#FEF2F2;border-color:var(--red);}
 .sc-warn  {background:#FFFBEB;border-color:var(--amber);}
 .sc-safe  {background:#F0FDF4;border-color:var(--green);}
@@ -86,7 +86,7 @@ html,body,[class*="css"]{font-family:'Inter',sans-serif;}
 /* ── Lesson / AI response ── */
 .lesson-box{background:var(--light);border-radius:12px;padding:16px;
   border-left:4px solid var(--blue);font-size:.86rem;line-height:1.75;
-  color:white;margin-bottom:.9rem;}
+  color:black;margin-bottom:.9rem;}
 
 /* ── Trust / tip banners ── */
 .tip{background:#EFF6FF;border:1px solid #BFDBFE;border-radius:10px;

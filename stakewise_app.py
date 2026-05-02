@@ -171,8 +171,13 @@ html,body,[class*="css"]{font-family:'Inter',sans-serif;}
 
 # ─── OpenAI ────────────────────────────────────────────────────────────────────
 def get_client():
-    k = st.session_state.get("api_key","")
-    return openai.OpenAI(api_key=k) if k else None
+    try:
+        key = st.secrets.get("OPENAI_API_KEY", "")
+    except:
+        key = ""
+    if not key:
+        key = st.session_state.get("api_key", "")
+    return openai.OpenAI(api_key=key) if key else None
 
 def call_ai(system_prompt, user_prompt, max_tokens=600):
     c = get_client()
@@ -426,10 +431,20 @@ def render_bottom_nav():
 def render_sidebar():
     with st.sidebar:
         st.markdown("### ⚙️ Settings")
-        key = st.text_input("OpenAI API Key", value=st.session_state.api_key,
-                            type="password", placeholder="sk-...")
-        st.session_state.api_key = key
-        if key: st.success("API key connected ✓")
+        try:
+            secret_key = st.secrets.get("OPENAI_API_KEY", "")
+            if secret_key:
+                st.success("OpenAI API key loaded from secrets ✓")
+            else:
+                key = st.text_input("OpenAI API Key", value=st.session_state.get("api_key", ""),
+                                    type="password", placeholder="sk-...")
+                st.session_state.api_key = key
+                if key: st.success("API key connected ✓")
+        except:
+            key = st.text_input("OpenAI API Key", value=st.session_state.get("api_key", ""),
+                                type="password", placeholder="sk-...")
+            st.session_state.api_key = key
+            if key: st.success("API key connected ✓")
         if st.session_state.persona:
             st.markdown("---")
             st.markdown(f"**Level {st.session_state.level} · {lvl_name()}**")

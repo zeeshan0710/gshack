@@ -12,7 +12,6 @@ import streamlit as st
 import openai, json, time
 from datetime import datetime
 from collections import Counter
-import plotly.graph_objects as go
 
 # ─── Page config ───────────────────────────────────────────────────────────────
 st.set_page_config(page_title="StakeWise", page_icon="📈", layout="wide",
@@ -24,20 +23,19 @@ st.markdown("""
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 html,body,[class*="css"]{font-family:'Inter',sans-serif;}
 #MainMenu,footer,header{visibility:hidden;}
-.block-container{padding-top:0.8rem;padding-bottom:5rem;max-width:1080px;background:#F8FAF9;}
+.block-container{padding-top:0.8rem;padding-bottom:5rem;max-width:1080px;}
 
 :root{
-  --teal:#1D9E75; --teal-light:#E1F5EE; --teal-mid:#5DCAA5; --teal-dark:#0F6E56;
-  --amber:#BA7517; --coral:#D85A30;
-  --gray-50:#F8FAF9; --gray-100:#EFF3F1; --gray-200:#D4DDD9; --gray-400:#8FA89F; --gray-600:#4A6258; --gray-800:#1E3530;
-  --white:#FFFFFF; --text:#1E3530; --muted:#6B8C82; --border:#E2EDEA;
+  --navy:#0F2044; --blue:#1A56DB; --teal:#0EA5E9;
+  --green:#10B981; --amber:#F59E0B; --red:#EF4444;
+  --light:#EEF4FF; --border:#E2E8F0; --muted:#64748B;
 }
 
 /* ── Header ── */
 .sw-header{display:flex;align-items:center;gap:10px;padding:.6rem 1.2rem;
-  background:var(--teal);border-radius:14px;color:white;margin-bottom:1rem;}
+  background:var(--navy);border-radius:14px;color:white;margin-bottom:1rem;}
 .sw-logo{font-size:1.35rem;font-weight:800;letter-spacing:-.5px;}
-.sw-tagline{font-size:.73rem;color:#B8E6DB;margin-left:auto;}
+.sw-tagline{font-size:.73rem;color:#93C5FD;margin-left:auto;}
 
 /* ── Bottom Nav ── */
 .bottom-nav{
@@ -52,13 +50,13 @@ html,body,[class*="css"]{font-family:'Inter',sans-serif;}
   font-size:.65rem;font-weight:500;color:var(--muted);gap:2px;
   transition:color .15s;
 }
-.bnav-item.active{color:var(--teal);}
+.bnav-item.active{color:var(--blue);}
 .bnav-item .icon{font-size:1.2rem;}
 
 /* ── Cards ── */
 .sw-card{background:white;border:1px solid var(--border);border-radius:14px;
   padding:18px 20px;margin-bottom:.9rem;box-shadow:0 1px 4px rgba(0,0,0,.05);}
-.sw-card-title{font-size:.92rem;font-weight:600;color:var(--text);margin-bottom:.7rem;}
+.sw-card-title{font-size:.92rem;font-weight:600;color:var(--navy);margin-bottom:.7rem;}
 
 /* ── Stat row ── */
 .stat-row{display:flex;gap:8px;margin-bottom:.9rem;flex-wrap:wrap;}
@@ -66,51 +64,51 @@ html,body,[class*="css"]{font-family:'Inter',sans-serif;}
   border-radius:12px;padding:10px 12px;box-shadow:0 1px 3px rgba(0,0,0,.04);}
 .stat-label{font-size:.65rem;color:var(--muted);font-weight:500;
   text-transform:uppercase;letter-spacing:.4px;}
-.stat-value{font-size:1.25rem;font-weight:700;color:var(--text);margin-top:1px;}
+.stat-value{font-size:1.25rem;font-weight:700;color:var(--navy);margin-top:1px;}
 .stat-sub{font-size:.67rem;color:var(--muted);}
 
 /* ── Bars ── */
-.bar-wrap{background:var(--gray-100);border-radius:6px;height:9px;overflow:hidden;margin:3px 0;}
+.bar-wrap{background:#F1F5F9;border-radius:6px;height:9px;overflow:hidden;margin:3px 0;}
 .bar-fill{height:100%;border-radius:6px;transition:width .4s;}
-.xp-bar-wrap{background:var(--gray-100);border-radius:5px;height:7px;overflow:hidden;}
-.xp-bar{background:linear-gradient(90deg,var(--teal),var(--teal-mid));height:100%;border-radius:5px;}
+.xp-bar-wrap{background:#E2E8F0;border-radius:5px;height:7px;overflow:hidden;}
+.xp-bar{background:linear-gradient(90deg,var(--blue),var(--teal));height:100%;border-radius:5px;}
 
 /* ── Scenario cards ── */
-.sc{border-radius:12px;padding:14px 16px;border-left:4px solid;color:#1E3530;}
-.sc-severe{background:#FEF2F2;border-color:var(--coral);}
-.sc-warn  {background:#FAEEDA;border-color:var(--amber);}
-.sc-safe  {background:#E1F5EE;border-color:var(--teal);}
-.sc-info  {background:var(--teal-light);border-color:var(--teal);}
+.sc{border-radius:12px;padding:14px 16px;border-left:4px solid;color:black;}
+.sc-severe{background:#FEF2F2;border-color:var(--red);}
+.sc-warn  {background:#FFFBEB;border-color:var(--amber);}
+.sc-safe  {background:#F0FDF4;border-color:var(--green);}
+.sc-info  {background:var(--light);border-color:var(--blue);}
 .sc-title {font-weight:600;font-size:.83rem;margin-bottom:3px;}
 .sc-dollar{font-size:1.1rem;font-weight:700;margin-top:4px;}
 .sc-body  {font-size:.79rem;}
 
 /* ── Lesson / AI response ── */
-.lesson-box{background:var(--teal-light);border-radius:12px;padding:16px;
-  border-left:4px solid var(--teal);font-size:.86rem;line-height:1.75;
-  color:#1E3530;margin-bottom:.9rem;}
+.lesson-box{background:var(--light);border-radius:12px;padding:16px;
+  border-left:4px solid var(--blue);font-size:.86rem;line-height:1.75;
+  color:black;margin-bottom:.9rem;}
 
 /* ── Trust / tip banners ── */
-.tip{background:var(--teal-light);border:1px solid #9FE1CB;border-radius:10px;
-  padding:9px 13px;color:#0F6E56;font-size:.8rem;margin:.5rem 0;}
-.trust{background:var(--gray-50);border:1px solid var(--border);border-radius:10px;
-  padding:10px 14px;font-size:.75rem;color:var(--text);line-height:1.6;}
-.ok{background:var(--teal-light);border:1px solid #9FE1CB;border-radius:10px;
-  padding:9px 13px;color:var(--teal-dark);font-size:.83rem;font-weight:500;}
-.warn-box{background:#FAEEDA;border:1px solid #E0BF95;border-radius:10px;
-  padding:9px 13px;color:var(--amber);font-size:.8rem;}
+.tip{background:#EFF6FF;border:1px solid #BFDBFE;border-radius:10px;
+  padding:9px 13px;color:#1E40AF;font-size:.8rem;margin:.5rem 0;}
+.trust{background:#F8FAFC;border:1px solid #CBD5E1;border-radius:10px;
+  padding:10px 14px;font-size:.75rem;color:#475569;line-height:1.6;}
+.ok{background:#ECFDF5;border:1px solid #6EE7B7;border-radius:10px;
+  padding:9px 13px;color:#065F46;font-size:.83rem;font-weight:500;}
+.warn-box{background:#FFFBEB;border:1px solid #FCD34D;border-radius:10px;
+  padding:9px 13px;color:#92400E;font-size:.8rem;}
 
 /* ── Rebalancing wizard ── */
 .wizard-step{border-radius:12px;padding:14px 18px;margin-bottom:.8rem;
-.wizard-step{border:2px solid var(--border);background:white;}
-.wizard-step.active{border-color:var(--teal);background:var(--teal-light);}
-.wizard-step.done{border-color:var(--teal);background:var(--teal-light);}
-.step-header{font-weight:600;font-size:.88rem;color:var(--text);margin-bottom:6px;}
+  border:2px solid var(--border);background:white;}
+.wizard-step.active{border-color:var(--blue);background:var(--light);}
+.wizard-step.done{border-color:var(--green);background:#F0FDF4;}
+.step-header{font-weight:600;font-size:.88rem;color:var(--navy);margin-bottom:6px;}
 
 /* ── Rebalancing before/after ── */
 .rebal-box{border-radius:12px;padding:14px;text-align:center;}
-.rebal-before{background:#FAEEDA;border:1px solid #E0BF95;}
-.rebal-after {background:var(--teal-light);border:1px solid #9FE1CB;}
+.rebal-before{background:#FEF2F2;border:1px solid #FECACA;}
+.rebal-after {background:#F0FDF4;border:1px solid #BBF7D0;}
 .rebal-label {font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
 .rebal-num   {font-size:1.5rem;font-weight:800;}
 
@@ -119,11 +117,11 @@ html,body,[class*="css"]{font-family:'Inter',sans-serif;}
 .impact-dot{width:12px;height:12px;border-radius:50%;}
 
 /* ── Chat ── */
-.chat-user{background:var(--teal);color:white;border-radius:14px 14px 4px 14px;
+.chat-user{background:var(--blue);color:white;border-radius:14px 14px 4px 14px;
   padding:9px 13px;margin:5px 0;margin-left:16%;font-size:.85rem;}
-.chat-ai{background:var(--gray-50);border:1px solid var(--border);
+.chat-ai{background:#F8FAFC;border:1px solid var(--border);
   border-radius:14px 14px 14px 4px;padding:9px 13px;margin:5px 0;
-  margin-right:16%;font-size:.85rem;color:var(--text);}
+  margin-right:16%;font-size:.85rem;color:#000000;}
 
 /* ── Badges ── */
 .badge-grid{display:flex;flex-wrap:wrap;gap:8px;}
@@ -139,35 +137,35 @@ html,body,[class*="css"]{font-family:'Inter',sans-serif;}
 .hero-sub{font-size:.9rem;color:#93C5FD;margin-bottom:14px;}
 
 /* ── Persona reveal ── */
-.p-reveal{background:linear-gradient(135deg,var(--teal),var(--teal-mid));
+.p-reveal{background:linear-gradient(135deg,var(--navy),#1e3a8a);
   border-radius:16px;padding:26px;color:white;text-align:center;margin-bottom:1rem;}
 
 /* ── Step dots ── */
 .step-row{display:flex;gap:5px;align-items:center;margin-bottom:.9rem;}
 .step-dot{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;
   justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0;}
-.sd-done  {background:var(--teal);color:white;}
-.sd-active{background:var(--teal-mid);color:white;}
-.sd-todo  {background:var(--gray-100);color:var(--muted);}
+.sd-done  {background:var(--green);color:white;}
+.sd-active{background:var(--blue);color:white;}
+.sd-todo  {background:#E2E8F0;color:#94A3B8;}
 
 /* ── Glossary term ── */
-.gt{font-weight:600;color:var(--teal);}
+.gt{font-weight:600;color:var(--blue);}
 
 /* ── Button override ── */
 .stButton>button{border-radius:10px!important;font-size:.85rem!important;
   border:1.5px solid var(--border)!important;background:white!important;
-  color:var(--text)!important;text-align:left!important;width:100%!important;
+  color:var(--navy)!important;text-align:left!important;width:100%!important;
   padding:8px 13px!important;}
 .stButton>button:hover{border-color:var(--blue)!important;background:var(--light)!important;}
 
 /* ── Source badge ── */
-.source-badge{display:inline-block;background:var(--gray-100);border:1px solid var(--border);
-  border-radius:6px;font-size:.65rem;color:var(--muted);padding:1px 7px;margin-left:4px;}
+.source-badge{display:inline-block;background:#F1F5F9;border:1px solid #CBD5E1;
+  border-radius:6px;font-size:.65rem;color:#475569;padding:1px 7px;margin-left:4px;}
 
 /* ── Confidence bar ── */
 .conf-row{display:flex;align-items:center;gap:8px;font-size:.75rem;color:var(--muted);margin-top:6px;}
-.conf-bar-wrap{flex:1;background:var(--gray-100);border-radius:4px;height:5px;}
-.conf-bar{background:var(--teal);height:100%;border-radius:4px;}
+.conf-bar-wrap{flex:1;background:#E2E8F0;border-radius:4px;height:5px;}
+.conf-bar{background:var(--green);height:100%;border-radius:4px;}
 </style>
 """, unsafe_allow_html=True)
 
@@ -771,28 +769,6 @@ def screen_portfolio():
             with e:
                 if st.button("✕", key=f"del_{i}"):
                     st.session_state.portfolio.pop(i); st.rerun()
-        st.markdown('</div>',unsafe_allow_html=True)
-
-        # Allocation pie chart
-        st.markdown('<div class="sw-card"><div class="sw-card-title">🥧 Allocation Breakdown</div>',
-                    unsafe_allow_html=True)
-        alloc_data = {k: v for k, v in alloc.items() if v > 0}
-        if alloc_data:
-            colors_map = {"Bonds":"#1D9E75","Index Funds":"#5DCAA5","Cash / Savings":"#0F6E56",
-                         "Stocks":"#BA7517","International":"#D85A30","Alternative":"#8FA89F"}
-            fig = go.Figure(data=[go.Pie(
-                labels=list(alloc_data.keys()),
-                values=list(alloc_data.values()),
-                marker=dict(colors=[colors_map.get(k, "#1D9E75") for k in alloc_data.keys()]),
-                hovertemplate='<b>%{label}</b><br>%{value}%<extra></extra>'
-            )])
-            fig.update_layout(
-                height=280, margin=dict(t=10,b=10,l=0,r=0),
-                font=dict(family="Inter, sans-serif", size=12, color="#1E3530"),
-                paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
-                showlegend=True, legend=dict(x=0.5, y=-0.1, xanchor='center', yanchor='top')
-            )
-            st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
         st.markdown('</div>',unsafe_allow_html=True)
 
     with c2:

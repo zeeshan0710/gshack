@@ -121,7 +121,7 @@ html,body,[class*="css"]{font-family:'Inter',sans-serif;}
   padding:9px 13px;margin:5px 0;margin-left:16%;font-size:.85rem;}
 .chat-ai{background:#F8FAFC;border:1px solid var(--border);
   border-radius:14px 14px 14px 4px;padding:9px 13px;margin:5px 0;
-  margin-right:16%;font-size:.85rem;}
+  margin-right:16%;font-size:.85rem;color:#000000;}
 
 /* ── Badges ── */
 .badge-grid{display:flex;flex-wrap:wrap;gap:8px;}
